@@ -1,0 +1,2 @@
+* Sep 20 2:50 AM
+Do the basic parsing in ParseXML, create wikiParser object in ParseXML itself to get away with memory overhead.

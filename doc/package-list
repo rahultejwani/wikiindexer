@@ -1,0 +1,9 @@
+edu.buffalo.cse.ir.wikiindexer
+edu.buffalo.cse.ir.wikiindexer.indexer
+edu.buffalo.cse.ir.wikiindexer.parsers
+edu.buffalo.cse.ir.wikiindexer.parsers.test
+edu.buffalo.cse.ir.wikiindexer.test
+edu.buffalo.cse.ir.wikiindexer.tokenizer
+edu.buffalo.cse.ir.wikiindexer.tokenizer.rules
+edu.buffalo.cse.ir.wikiindexer.wikipedia
+edu.buffalo.cse.ir.wikiindexer.wikipedia.test
