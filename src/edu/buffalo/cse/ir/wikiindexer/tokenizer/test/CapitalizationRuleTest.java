@@ -15,7 +15,8 @@ import edu.buffalo.cse.ir.wikiindexer.IndexerConstants;
 import edu.buffalo.cse.ir.wikiindexer.tokenizer.TokenizerException;
 
 /**
- * @author rahultejwani
+ * @author nikhillo
+ * 
  */
 @RunWith(Parameterized.class)
 public class CapitalizationRuleTest extends TokenizerRuleTest {

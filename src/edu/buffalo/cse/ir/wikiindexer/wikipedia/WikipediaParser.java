@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 
+ * @author nikhillo
  * This class implements Wikipedia markup processing.
  * Wikipedia markup details are presented here: http://en.wikipedia.org/wiki/Help:Wiki_markup
  * It is expected that all methods marked "todo" will be implemented by students.

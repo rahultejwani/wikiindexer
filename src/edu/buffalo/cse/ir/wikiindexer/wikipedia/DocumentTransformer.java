@@ -14,7 +14,12 @@ import edu.buffalo.cse.ir.wikiindexer.tokenizer.Tokenizer;
 import edu.buffalo.cse.ir.wikiindexer.tokenizer.TokenizerException;
 import edu.buffalo.cse.ir.wikiindexer.wikipedia.WikipediaDocument.Section;
 
-
+/**
+ * A Callable document transformer that converts the given WikipediaDocument object
+ * into an IndexableDocument object using the given Tokenizer
+ * @author nikhillo
+ *
+ */
 public class DocumentTransformer implements Callable<IndexableDocument> {
 	/**
 	 * Default constructor, DO NOT change

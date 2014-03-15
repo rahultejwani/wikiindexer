@@ -11,7 +11,7 @@ import edu.buffalo.cse.ir.wikiindexer.tokenizer.TokenStream;
 
 /**
  * A simple map based token view of the transformed document
- * 
+ * @author nikhillo
  *
  */
 public class IndexableDocument {

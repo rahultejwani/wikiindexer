@@ -15,8 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author rahultejwani
- *
+ * @author nikhillo
  * This class acts as a container for a single wikipedia page.
  * It has a structure analogous to how a page looks in a browser
  * The class has various getters and setters for the different fields

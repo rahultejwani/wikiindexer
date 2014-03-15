@@ -17,7 +17,8 @@ import edu.buffalo.cse.ir.wikiindexer.IndexerConstants;
 import edu.buffalo.cse.ir.wikiindexer.tokenizer.TokenizerException;
 
 /**
- * @author rahultejwani
+ * @author nikhillo
+ * 
  */
 @RunWith(Parameterized.class)
 public class DateRuleTest extends TokenizerRuleTest {
@@ -62,8 +63,8 @@ public class DateRuleTest extends TokenizerRuleTest {
 							new Object[] { "19000411 is the 101st day of the year (102nd in leap years) in the Gregorian calendar." },
 							runtest("April 11 is the 101st day of the year (102nd in leap years) in the Gregorian calendar."));
 					assertArrayEquals(
-							new Object[] { "Apple is one of the world's most valuable publicly traded companies in 20110101ï¿½20120101." },
-							runtest("Apple is one of the world's most valuable publicly traded companies in 2011ï¿½12."));
+							new Object[] { "Apple is one of the world's most valuable publicly traded companies in 20110101Ð20120101." },
+							runtest("Apple is one of the world's most valuable publicly traded companies in 2011Ð12."));
 				} else {
 					assertArrayEquals(
 							new Object[] { "Vidya", "Balan", "born",
@@ -140,10 +141,10 @@ public class DateRuleTest extends TokenizerRuleTest {
 							new Object[] { "Apple", "is", "one", "of", "the",
 									"world's", "most", "valuable", "publicly",
 									"traded", "companies", "in",
-									"20110101ï¿½20120101." },
+									"20110101Ð20120101." },
 							runtest("Apple", "is", "one", "of", "the",
 									"world's", "most", "valuable", "publicly",
-									"traded", "companies", "in", "2011ï¿½12."));
+									"traded", "companies", "in", "2011Ð12."));
 				}
 
 			} catch (TokenizerException e) {
