@@ -63,6 +63,7 @@ public class TokenStreamTest {
 	 */
 	@Test
 	public void testGetTokenMap() {
+	
 		//null string based stream
 		TokenStream stream = new TokenStream((String)null);
 		assertEquals(null, stream.getTokenMap());

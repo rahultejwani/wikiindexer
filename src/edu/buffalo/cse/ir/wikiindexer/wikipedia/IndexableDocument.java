@@ -3,20 +3,32 @@
  */
 package edu.buffalo.cse.ir.wikiindexer.wikipedia;
 
+
+
 import edu.buffalo.cse.ir.wikiindexer.indexer.INDEXFIELD;
 import edu.buffalo.cse.ir.wikiindexer.tokenizer.TokenStream;
 
+
 /**
  * A simple map based token view of the transformed document
- * @author nikhillo
+ * 
  *
  */
 public class IndexableDocument {
+	
+	TokenStream author=null;
+	TokenStream term = null;
+	TokenStream link = null;
+	TokenStream category = null;
+	String doc_id= null;
+		
 	/**
 	 * Default constructor
 	 */
 	public IndexableDocument() {
 		//TODO: Init state as needed
+		//this.author= new TokenStream();
+		
 	}
 	
 	/**
@@ -27,6 +39,26 @@ public class IndexableDocument {
 	 */
 	public void addField(INDEXFIELD field, TokenStream stream) {
 		//TODO: Implement this method
+		if(field.equals(INDEXFIELD.AUTHOR))
+		{
+			this.author = stream;
+		}
+		else if(field.equals(INDEXFIELD.TERM))
+		{
+			this.term = stream;
+		}
+		else if(field.equals(INDEXFIELD.CATEGORY))
+		{
+			this.category = stream;
+		}
+		else if(field.equals(INDEXFIELD.LINK))
+		{
+			this.link = stream;
+		}
+		else
+		{
+			System.err.println("invalid stream:");
+		}
 	}
 	
 	/**
@@ -36,7 +68,31 @@ public class IndexableDocument {
 	 */
 	public TokenStream getStream(INDEXFIELD key) {
 		//TODO: Implement this method
+		switch(key)
+		{
+		case AUTHOR:
+		{
+			return author;
+		}
+		case TERM:
+		{
+			return term;
+		}
+		case LINK:
+		{
+			return link;
+		}
+		case CATEGORY:
+		{
+			return category;
+		}
+		}
 		return null;
+	}
+	public void setId(String id)
+	{
+		//System.out.println("here");
+		this.doc_id = id.toLowerCase();
 	}
 	
 	/**
@@ -47,7 +103,9 @@ public class IndexableDocument {
 	 */
 	public String getDocumentIdentifier() {
 		//TODO: Implement this method
-		return null;
+		//System.out.println("DocID: "+ doc_id);
+		return doc_id;
 	}
+	
 	
 }

@@ -15,8 +15,7 @@ import edu.buffalo.cse.ir.wikiindexer.IndexerConstants;
 import edu.buffalo.cse.ir.wikiindexer.tokenizer.TokenizerException;
 
 /**
- * @author nikhillo
- *
+ * @author rahultejwani
  */
 @RunWith(Parameterized.class)
 public class HyphenRuleTest extends TokenizerRuleTest {
@@ -33,7 +32,7 @@ public class HyphenRuleTest extends TokenizerRuleTest {
 		} else {
 			try {
 				//whitespace padded hyphens
-				assertArrayEquals(new Object[]{"hyphen", "test"}, runtest("hyphen"," - ", "test"));
+		    	assertArrayEquals(new Object[]{"hyphen", "test"}, runtest("hyphen"," - ", "test"));
 				assertArrayEquals(new Object[]{"hyphen", "test"}, runtest("hyphen"," -- ", "test"));
 				
 				//alphanumeric

@@ -3,6 +3,8 @@
  */
 package edu.buffalo.cse.ir.wikiindexer.indexer;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -32,9 +34,22 @@ public class SharedDictionary extends Dictionary {
 	 * @param value: The value to be looked up
 	 * @return The id as explained above.
 	 */
+	public static <K,V> HashMap<V,K> reverse(Map<K,V> map) {
+	    HashMap<V,K> rev = new HashMap<V, K>();
+	    for(Map.Entry<K,V> entry : map.entrySet())
+	        rev.put(entry.getValue(), entry.getKey());
+	    return rev;
+	}
 	public synchronized int lookup(String value) {
-		//TODO Implement this method
-		return -1;
+		//System.out.println("in Lookup");
+		if (reverse(linkDictionary).containsKey(value))
+			return reverse(linkDictionary).get(value);
+		else
+		{	
+			linkID++;
+			linkDictionary.put(linkID,value);
+			return linkID;
+		}
 	}
 
 }

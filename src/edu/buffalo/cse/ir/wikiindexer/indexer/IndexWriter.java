@@ -3,7 +3,15 @@
  */
 package edu.buffalo.cse.ir.wikiindexer.indexer;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Map.Entry;
+import java.util.HashMap;
 import java.util.Properties;
+
+import edu.buffalo.cse.ir.wikiindexer.IndexerConstants;
 
 /**
  * @author nikhillo
@@ -11,7 +19,12 @@ import java.util.Properties;
  * 
  */
 public class IndexWriter implements Writeable {
-	
+	Properties properties;
+	INDEXFIELD iKeyField;
+	INDEXFIELD iValueField;
+	boolean isForward;
+	PostingList plf;
+	LinkIndexList lif;
 	/**
 	 * Constructor that assumes the underlying index is inverted
 	 * Every index (inverted or forward), has a key field and the value field
@@ -27,7 +40,7 @@ public class IndexWriter implements Writeable {
 	public IndexWriter(Properties props, INDEXFIELD keyField, INDEXFIELD valueField) {
 		this(props, keyField, valueField, false);
 	}
-	
+
 	/**
 	 * Overloaded constructor that allows specifying the index type as
 	 * inverted or forward
@@ -43,9 +56,16 @@ public class IndexWriter implements Writeable {
 	 * @param isForward: true if the index is a forward index, false if inverted
 	 */
 	public IndexWriter(Properties props, INDEXFIELD keyField, INDEXFIELD valueField, boolean isForward) {
-		//TODO: Implement this method
+		this.properties = props;
+		this.iKeyField = keyField;
+		this.iValueField = valueField;
+		this.isForward = isForward;
+		if(keyField.equals(INDEXFIELD.LINK) )
+			lif = new LinkIndexList();
+		else
+			plf = new PostingList();
 	}
-	
+
 	/**
 	 * Method to make the writer self aware of the current partition it is handling
 	 * Applicable only for distributed indexes.
@@ -53,8 +73,9 @@ public class IndexWriter implements Writeable {
 	 */
 	public void setPartitionNumber(int pnum) {
 		//TODO: Optionally implement this method
+		// Leaving for later
 	}
-	
+
 	/**
 	 * Method to add a given key - value mapping to the index
 	 * @param keyId: The id for the key field, pre-converted
@@ -64,9 +85,9 @@ public class IndexWriter implements Writeable {
 	 * @throws IndexerException: If any exception occurs while indexing
 	 */
 	public void addToIndex(int keyId, int valueId, int numOccurances) throws IndexerException {
-		//TODO: Implement this method
+		lif.add(keyId, valueId, numOccurances);
 	}
-	
+
 	/**
 	 * Method to add a given key - value mapping to the index
 	 * @param keyId: The id for the key field, pre-converted
@@ -75,10 +96,10 @@ public class IndexWriter implements Writeable {
 	 *  by the key field. Ignore if a forward index
 	 * @throws IndexerException: If any exception occurs while indexing
 	 */
-	public void addToIndex(int keyId, String value, int numOccurances) throws IndexerException {
-		//TODO: Implement this method
+	public void addToIndex(int keyId, String valueId, int numOccurances) throws IndexerException {
+		lif.add(keyId, valueId, numOccurances);
 	}
-	
+
 	/**
 	 * Method to add a given key - value mapping to the index
 	 * @param key: The key for the key field
@@ -88,9 +109,16 @@ public class IndexWriter implements Writeable {
 	 * @throws IndexerException: If any exception occurs while indexing
 	 */
 	public void addToIndex(String key, int valueId, int numOccurances) throws IndexerException {
-		//TODO: Implement this method
+		key = key.replaceAll("[^\\w\\d]+","");
+		if(key.trim().length()>0)
+		{
+			plf.add(key, valueId, numOccurances);
+			String reverse = new StringBuilder(key).reverse().toString();
+			if(!reverse.equals(key))
+				plf.add(reverse, valueId, numOccurances);
+		}
 	}
-	
+
 	/**
 	 * Method to add a given key - value mapping to the index
 	 * @param key: The key for the key field
@@ -99,18 +127,94 @@ public class IndexWriter implements Writeable {
 	 *  by the key field. Ignore if a forward index
 	 * @throws IndexerException: If any exception occurs while indexing
 	 */
-	public void addToIndex(String key, String value, int numOccurances) throws IndexerException {
-		//TODO: Implement this method
+	public void addToIndex(String key, String valueId, int numOccurances) throws IndexerException {
+		//Should never come to this function
+		key = key.replaceAll("[^\\w\\d]+","");
+		if(key.trim().length()>0)
+			plf.add(key, valueId.length(), numOccurances);
 	}
 
 	/* (non-Javadoc)
 	 * @see edu.buffalo.cse.ir.wikiindexer.indexer.Writeable#writeToDisk()
 	 */
 	public void writeToDisk() throws IndexerException {
-		// TODO Implement this method
+		String filename = getFileName();
+		FileOutputStream file;
+		BufferedWriter bw;
+		try
+		{
+			String tempPath = properties.getProperty(IndexerConstants.TEMP_DIR);			
+			file = new FileOutputStream(tempPath+"/"+filename);				
+			bw = new BufferedWriter(new OutputStreamWriter(file, "UTF-8"));
+			if(iKeyField == INDEXFIELD.LINK)
+			{
+				for (Entry<Integer, Postings> entry : lif.getPostList().entrySet()) {
+					HashMap<Integer, Integer> df= entry.getValue().getDocFreq();
+					int i=0;
+					bw.write(entry.getKey()+"#"+df.size()+"#");
+					//System.out.print(entry.getKey()+"#"+df.size()+"#");
+					for (Entry<Integer,Integer> docFreq : df.entrySet()) {
+						bw.write(docFreq.getKey().toString()+":"+docFreq.getValue().toString());
+						//System.out.println(docFreq.getKey()+":"+docFreq.getValue());
+						if(i != (df.size()-1))
+							bw.write(":");
+						else
+							bw.write("\n");
+						i++;
+					}
+
+				}
+
+			}
+			else
+			{
+				for (Entry<String, Postings> entry : plf.getPostList().entrySet()) {
+					HashMap<Integer, Integer> df= entry.getValue().getDocFreq();
+					int i=0;
+					bw.write(entry.getKey()+"#"+df.size()+"#");
+					for (Entry<Integer,Integer> docFreq : df.entrySet()) {
+						bw.write(docFreq.getKey()+":"+docFreq.getValue());
+						
+						if(i != (df.size()-1))
+							bw.write(":");
+						else
+							bw.write("\n");
+						i++;
+					}
+				}
+				
+			}
+			bw.close();
+		}
+		catch(IOException e)
+		{
+			System.err.println(e.getStackTrace()+":"+e);
+		}
 
 	}
-
+	public String getFileName()
+	{
+		String filename = null;
+		switch(iKeyField)
+		{
+		case LINK: 
+			filename = "LinkIndex.dat";
+			break;
+		case AUTHOR:
+			filename = "AuthorIndex.dat";
+			break;
+		case CATEGORY:
+			filename = "CategoryIndex.dat";
+			break;
+		case TERM:
+			filename = "TermIndex.dat";
+			break;
+		default:
+			filename = "InvalidFile.dat";
+			break;
+		}
+		return filename;
+	}
 	/* (non-Javadoc)
 	 * @see edu.buffalo.cse.ir.wikiindexer.indexer.Writeable#cleanUp()
 	 */

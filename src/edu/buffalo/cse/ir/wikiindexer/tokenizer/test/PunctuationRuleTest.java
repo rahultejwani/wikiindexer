@@ -15,8 +15,7 @@ import edu.buffalo.cse.ir.wikiindexer.IndexerConstants;
 import edu.buffalo.cse.ir.wikiindexer.tokenizer.TokenizerException;
 
 /**
- * @author nikhillo
- *
+ * @author rahultejwani
  */
 @RunWith(Parameterized.class)
 public class PunctuationRuleTest extends TokenizerRuleTest {

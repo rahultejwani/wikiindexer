@@ -33,8 +33,7 @@ public class EnglishStemmer implements TokenizerRule {
 						s = new Stemmer();
 						for (char c: token.toCharArray()) {
 							s.add(c);
-						}
-						
+						}					
 						s.stem();
 						stream.previous(); //move token back as we need to change last read token
 						stream.set(s.toString()); //change value, no iterator move

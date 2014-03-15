@@ -49,6 +49,7 @@ public class ParserTest extends PropertiesBasedTest {
 	@Test
 	public final void testParse() {
 		Parser testClass = new Parser(idxProps);
+		
 		ArrayList<WikipediaDocument> list = new ArrayList<WikipediaDocument>();
 		
 		//null file

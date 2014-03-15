@@ -42,10 +42,11 @@ public class TokenizerRuleTest extends PropertiesBasedTest {
 				preTknRuleSet = new HashSet<String>(Arrays.asList(splits));
 			}
 		}
-		
+		System.out.println("constant"+ constantName);
 		String className = idxProps.getProperty(constantName);
 		if (className != null) {
 			try {
+				System.out.println("class: "+className);
 				Class cls = Class.forName(className);
 				Constructor[] cnstrs = cls.getDeclaredConstructors();
 				Class[] ptypes;

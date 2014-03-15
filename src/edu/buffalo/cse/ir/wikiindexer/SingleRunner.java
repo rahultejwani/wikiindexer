@@ -51,6 +51,9 @@ public class SingleRunner {
 	 * @throws InterruptedException 
 	 */
 	public static void main(String[] args) throws InterruptedException {
+		
+		String[] st = {"files/properties.config","-b"};
+		args= st;
 		if (args.length != 2) {
 			printUsage();
 			System.exit(1);
@@ -64,7 +67,7 @@ public class SingleRunner {
 				} else  {
 					if (args[1] != null && args[1].length() == 2) {
 						String mode = args[1].substring(1).toLowerCase();
-						
+
 						if ("t".equals(mode)) {
 							runTests(filename);
 						} else if ("i".equals(mode)) {
@@ -91,7 +94,7 @@ public class SingleRunner {
 		}
 
 	}
-	
+
 	private static void runIndexer(Properties properties) throws InterruptedException {
 		long start;
 		System.out.println("Starting .......");
@@ -99,31 +102,32 @@ public class SingleRunner {
 		Parser parser = new Parser(properties);
 		start = System.currentTimeMillis();
 		parser.parse(FileUtil.getDumpFileName(properties), list);
-		
+
 		System.out.println("Finished parsing: " + (System.currentTimeMillis() - start));
 		Map<INDEXFIELD, Tokenizer> tknizerMap;
 		ExecutorService svc = Executors.newSingleThreadExecutor();
 		CompletionService<IndexableDocument> pool = new ExecutorCompletionService<IndexableDocument>(svc);
 		int numdocs = list.size();
-		
+
 		start = System.currentTimeMillis();
 		System.out.println("Starting tokenization");
 		for (WikipediaDocument doc : list) {
 			tknizerMap = initMap(properties);
 			pool.submit(new DocumentTransformer(tknizerMap, doc));
 		}
-		
+
 		System.out.println("Submitted tokenization: " + (System.currentTimeMillis() - start));
-		
+
 		IndexableDocument idoc;
 		SharedDictionary docDict = new SharedDictionary(properties, INDEXFIELD.LINK);
 		int currDocId;
-		ThreadedIndexerRunner termRunner = new ThreadedIndexerRunner(properties);
+	//	ThreadedIndexerRunner termRunner = new ThreadedIndexerRunner(properties);
+		SingleIndexerRunner termRunner = new SingleIndexerRunner(properties, INDEXFIELD.TERM, INDEXFIELD.LINK, docDict, false);
 		SingleIndexerRunner authIdxer = new SingleIndexerRunner(properties, INDEXFIELD.AUTHOR, INDEXFIELD.LINK, docDict, false);
 		SingleIndexerRunner catIdxer = new SingleIndexerRunner(properties, INDEXFIELD.CATEGORY, INDEXFIELD.LINK, docDict, false);
 		SingleIndexerRunner linkIdxer = new SingleIndexerRunner(properties, INDEXFIELD.LINK, INDEXFIELD.LINK, docDict, true);
 		Map<String, Integer> tokenmap;
-		
+
 		System.out.println("Starting indexing.....");
 		start = System.currentTimeMillis();
 		double pctComplete = 0;
@@ -143,8 +147,10 @@ public class SingleRunner {
 								if (tokenmap != null) {
 									switch (fld) {
 									case TERM:
-										termRunner.addToIndex(tokenmap,
-												currDocId);
+								//		termRunner.addToIndex(tokenmap,
+									//			currDocId);
+										termRunner.processTokenMap(
+												currDocId, tokenmap);
 										break;
 									case AUTHOR:
 										authIdxer.processTokenMap(
@@ -172,16 +178,16 @@ public class SingleRunner {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			pctComplete = (i * 100.0d) / numdocs;
-			
+
 			if (pctComplete % 10 == 0) {
 				System.out.println(pctComplete+ "% submission complete");
 			}
 		}
-		
+
 		System.out.println("Submitted all tasks in: " + (System.currentTimeMillis() - start));
-		
+
 		try {
 			termRunner.cleanup();
 			authIdxer.cleanup();
@@ -193,7 +199,7 @@ public class SingleRunner {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("Waiting for all tasks to complete");
 		while (termRunner.isFinished() && authIdxer.isFinished() && catIdxer.isFinished() && linkIdxer.isFinished()) {
 			//do nothing
@@ -201,20 +207,20 @@ public class SingleRunner {
 		}
 		System.out.println("Process complete: " + (System.currentTimeMillis() - start));
 		svc.shutdown();
-		
-		
-		
-		
-		
+
+
+
+
+
 	}
-	
+
 	private static Map<INDEXFIELD, Tokenizer> initMap(Properties props) {
 		HashMap<INDEXFIELD, Tokenizer> map = new HashMap<INDEXFIELD, Tokenizer>(INDEXFIELD.values().length);
 		TokenizerFactory fact = TokenizerFactory.getInstance(props);
 		for (INDEXFIELD fld : INDEXFIELD.values()) {
 			map.put(fld, fact.getTokenizer(fld));
 		}
-		
+
 		return map;
 	}
 
@@ -230,9 +236,9 @@ public class SingleRunner {
 		System.err.println("-t: Only execute tests");
 		System.err.println("-i: Only run the indexer");
 		System.err.println("-b: Run both, tests first then indexer");
-		
+
 	}
-	
+
 	/**
 	 * Method to execute all tests
 	 * @param filename: Filename for the properties file
@@ -241,9 +247,9 @@ public class SingleRunner {
 		System.setProperty("PROPSFILENAME", filename);
 		JUnitCore core = new JUnitCore();
 		core.run(new Computer(), AllTests.class);
-		
+
 	}
-	
+
 	/**
 	 * Method to load the Properties object from the given file name
 	 * @param filename: The filename from which to load Properties
@@ -253,7 +259,7 @@ public class SingleRunner {
 
 		try {
 			Properties props = FileUtil.loadProperties(filename);
-			
+
 			if (validateProps(props)) {
 				return props;
 			} else {
@@ -265,10 +271,10 @@ public class SingleRunner {
 		} catch (IOException e) {
 			System.err.println("Error while reading properties from the specified file: " + filename);
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Method to validate that the properties object has been correctly loaded
 	 * @param props: The Properties object to validate
@@ -281,7 +287,7 @@ public class SingleRunner {
 			Field[] flds = IndexerConstants.class.getDeclaredFields();
 			boolean valid = true;
 			Object key;
-			
+
 			for (Field f : flds) {
 				if (f.isAnnotationPresent(RequiredConstant.class) ) {
 					try {
@@ -291,16 +297,16 @@ public class SingleRunner {
 							valid = false;
 						}
 					} catch (IllegalArgumentException e) {
-						
+
 					} catch (IllegalAccessException e) {
-						
+
 					}
 				}
 			}
-			
+
 			return valid;
 		}
-		
+
 		return false;
 	}
 

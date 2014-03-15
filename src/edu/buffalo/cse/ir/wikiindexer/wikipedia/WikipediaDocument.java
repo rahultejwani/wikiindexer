@@ -15,7 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author nikhillo
+ * @author rahultejwani
+ *
  * This class acts as a container for a single wikipedia page.
  * It has a structure analogous to how a page looks in a browser
  * The class has various getters and setters for the different fields
@@ -28,30 +29,30 @@ import java.util.Set;
 public class WikipediaDocument {
 	/* This is the timestamp */
 	private Date publishDate;
-	
+
 	/* Contributor: username or ip */
 	private String author;
-	
+
 	/* Page id, not revision nor parent id */
 	private int id;
-	
+
 	/* Page title */
 	private String title;
-	
+
 	/* Look at the Section class below. Every page is a collection of sections */
 	private List<Section> sections;
-	
+
 	/* This is a set of all links referenced by this page */
 	private Set<String> links;
-	
+
 	/* This is a list of all categories of the page */
 	private List<String> categories;
-	
+
 	/* A map representation of all language links. The key is the language code, value is the url */
 	private Map<String, String> langLinks;
-	
+
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-	
+
 	/**
 	 * Default constructor.
 	 * @param idFromXml: The parsed id from the xml
@@ -70,7 +71,7 @@ public class WikipediaDocument {
 		categories = new ArrayList<String>();
 		langLinks = new HashMap<String, String>();
 	}
-	
+
 	/**
 	 * Method to add a section to the given document
 	 * @param title: The parsed title of the section
@@ -79,7 +80,7 @@ public class WikipediaDocument {
 	protected void addSection(String title, String text) {
 		sections.add(new Section(title, text));
 	}
-	
+
 	/**
 	 * Method to add a link to the set of links referenced by this document
 	 * @param link: The page name for the link
@@ -87,7 +88,7 @@ public class WikipediaDocument {
 	protected void addLink(String link) {
 		links.add(link);
 	}
-	
+
 	/**
 	 * Method to bulk add links to the set of links referenced by this document
 	 * @param links: The collection of links to be added, each referenced by the page name
@@ -95,7 +96,7 @@ public class WikipediaDocument {
 	protected void addLInks(Collection<String> links) {
 		this.links.addAll(links);
 	}
-	
+
 	/**
 	 * Method to add a category to the list of categories that classify this document
 	 * @param category: The category to be added
@@ -103,7 +104,7 @@ public class WikipediaDocument {
 	protected void addCategory(String category) {
 		categories.add(category);
 	}
-	
+
 	/**
 	 * Method to bulk add categories to the list of categories classifying this document
 	 * @param categories: The collection of categories to be added
@@ -111,7 +112,7 @@ public class WikipediaDocument {
 	protected void addCategories(Collection<String> categories) {
 		this.categories.addAll(categories);
 	}
-	
+
 	/**
 	 * Method to add a given language to link mapping to the list of language mappings for this document
 	 * @param langCode: The language code that references the link
@@ -120,7 +121,7 @@ public class WikipediaDocument {
 	protected void addLangLink(String langCode, String langLink) {
 		langLinks.put(langCode, langLink);
 	}
-	
+
 	/**
 	 * Method to bulk add language links to the list of mappings for this document
 	 * @param links: The map containing the mappings to be added
@@ -128,7 +129,7 @@ public class WikipediaDocument {
 	protected void addLangLinks(Map<String, String> links) {
 		langLinks.putAll(links);
 	}
-	
+
 	/**
 	 * @return the publishDate
 	 */
@@ -177,7 +178,7 @@ public class WikipediaDocument {
 	public Map<String, String> getLangLinks() {
 		return langLinks;
 	}
-	
+
 	/**
 	 * @return the title
 	 */
@@ -190,7 +191,7 @@ public class WikipediaDocument {
 	public class Section {
 		private String title;
 		private String text;
-		
+
 		/**
 		 * Default constructor. Please do not change visibility of the method.
 		 * @param parsedTitle: The parsed section title
@@ -205,6 +206,8 @@ public class WikipediaDocument {
 		 * @return the title
 		 */
 		public String getTitle() {
+			if(title==null)
+				title = "Default";
 			return title;
 		}
 
@@ -215,5 +218,5 @@ public class WikipediaDocument {
 			return text;
 		}
 	}
-	
+
 }

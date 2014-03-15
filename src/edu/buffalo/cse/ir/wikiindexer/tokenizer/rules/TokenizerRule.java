@@ -25,6 +25,7 @@ public interface TokenizerRule {
 	 * @author nikhillo
 	 *
 	 */
+	
 	public enum RULENAMES {
 		PUNCTUATION { public String toString() {return "PUNCTUATION";}}, //for punctuation marks that could mark end of sentence {. ? ! }
 		APOSTROPHE { public String toString() {return "APOSTROPHE";}}, //for apostrophes only

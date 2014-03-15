@@ -15,8 +15,7 @@ import edu.buffalo.cse.ir.wikiindexer.IndexerConstants;
 import edu.buffalo.cse.ir.wikiindexer.tokenizer.TokenizerException;
 
 /**
- * @author nikhillo
- *
+ * @author rahultejwani
  */
 @RunWith(Parameterized.class)
 public class ApostropheRuleTest extends TokenizerRuleTest {
@@ -58,7 +57,7 @@ public class ApostropheRuleTest extends TokenizerRuleTest {
 				} else {
 					//basic rules
 					assertArrayEquals(new Object[]{"Finland"}, runtest("Finland's"));
-					assertArrayEquals(new Object[]{"Gladys", "house"}, runtest("Gladys'", "house"));
+					assertArrayEquals(new Object[]{"Gladys house"}, runtest("Gladys' house"));
 		
 					//contractions
 					assertArrayEquals(new Object[]{"is","not"}, runtest("isn't"));

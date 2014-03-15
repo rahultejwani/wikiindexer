@@ -15,8 +15,7 @@ import edu.buffalo.cse.ir.wikiindexer.IndexerConstants;
 import edu.buffalo.cse.ir.wikiindexer.tokenizer.TokenizerException;
 
 /**
- * @author nikhillo
- * 
+ * @author rahultejwani
  */
 @RunWith(Parameterized.class)
 public class NumberRuleTest extends TokenizerRuleTest {
@@ -37,7 +36,7 @@ public class NumberRuleTest extends TokenizerRuleTest {
 							runtest("The App Store offered more than 775,000 apps by Apple and third parties."));
 					assertArrayEquals(
 							new Object[] { "The game received average review scores of % and / for the Xbox version" },
-							runtest("The game received average review scores of 96.92% and 98/100 for the Xbox 360 version"));
+						runtest("The game received average review scores of 96.92% and 98/100 for the Xbox 360 version"));
 					assertArrayEquals(
 							new Object[] { "The number is the sixth prime number" },
 							runtest("The number 13 is the sixth prime number"));
